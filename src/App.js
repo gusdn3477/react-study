@@ -1,76 +1,78 @@
-import React, { useEffect, useMemo, useState } from "react";
-
-// const hardCalculate = (number) => {
-//   console.log('어려운 계산!');
-//   for (let i=0;i<999999999; i++){} // 생각하는 시간
-//   return number + 10000;
-// }
-
-// const easyCalculate = (number) => {
-//   console.log('짱 쉬운 계산!');
-//   return number + 1;
-// }
+import React, { useEffect, useCallback, useState } from "react";
+import Box from "./Box";
 
 function App() {
+  const [size, setSizes] = useState(100);
+  const [isDark, setIsDark] = useState(false);
+  // 부모 컴포넌트가 바뀔 때 자식도 바뀐다고 해서 일부러 자식에 영향가지 않는 state를 만들고 실험해 봤다.
+  // prac이라는 숫자를 바꾸면 props로 넘겨주지 않아도 렌더링이 된다.
+  // Box.js 주석처리된 6~8 라인이 실험 코드
+  const [prac, setPracs] = useState(0);
 
-  const [number, setNumber] = useState(0);
-  const [isKorea, setIsKorea] = useState(true);
-
-  // Object를 또 할당받기에 useEffect가 실행된다. (다른 메모리 공간에 저장됨)
-  // const location = {
-  //   country : isKorea ? '한국' : '외국',
-  // };
-
-  const location = useMemo(() => {
+  const createBoxStyle = useCallback(() => {
     return {
-      country: isKorea ? '한국' : '외국',
+      backgroundColor: "pink",
+      width: `${size}px`,
+      height: `${size}px`,
     };
-  }, [isKorea]);
-
-  useEffect(() => {
-    console.log("useEffect 호출");
-  }, [location]);
+  }, [size]);
 
   return (
-    <div>
-      <h2>하루에 몇 끼 먹어요?</h2>
-      <input
-        type="number"
-        value={number}
-        onChange={e => setNumber(e.target.value)}
-      />
-      <hr />
-      <h2>어느 나라에 있어요?</h2>
-      <p>나라: {location.country}</p>
-      <button onClick={() => setIsKorea(!isKorea)}>비행기 타자</button>
+    <div
+      style={{
+        background: isDark ? "black" : "white",
+      }}
+    >
+      <div>
+        <input
+          type="number"
+          value={size}
+          onChange={(e) => setSizes(e.target.value)}
+        />
+        <button onClick={() => setIsDark(!isDark)}>Change Theme</button>
+        <Box createBoxStyle={createBoxStyle} />
+      </div>
+      <div>
+        <input
+          type="number"
+          value={prac}
+        />
+        <button onClick={() => setPracs(prac+1)}>Change Theme</button>
+      </div>
     </div>
   );
-  // const [hardNumber, setHardNumber] = useState(1);
-  // const [easyNumber, setEasyNumber] = useState(1);
+  // const [number, setNumber] = useState(0);
+  // const [toggle, setToggle] = useState(true);
 
-  // // const hardSum = hardCalculate(hardNumber);
-  // const hardSum = useMemo(() => {return hardCalculate(hardNumber)}, [hardNumber]);
-  // const easySum = easyCalculate(easyNumber);
+  // // 함수도 객체이기 때문에 렌더링 시 새로 만들어진다.
+  // // 새로 생성된 함수의 주소를 someFunction가 참조한다.
+  // // const someFunction = () => {
+  // //   console.log(`someFunc: number: ${number}`);
+  // //   return;
+  // // };
+
+  // // 메모이제이션 된 someFunction을 사용할 수 있다.
+  // const someFunction = useCallback(() => {
+  //   console.log(`someFunc: number: ${number}`);
+  //   return ;
+  // }, [number]);
+
+  // useEffect(() => {
+  //   console.log("someFunction이 변경되었습니다.");;
+  // }, [someFunction])
 
   // return (
   //   <div>
-  //     <h3>어려운 계산기</h3>
   //     <input
   //       type="number"
-  //       value={hardNumber}
-  //       onChange={e => setHardNumber(parseInt(e.target.value))}
+  //       value={number}
+  //       onChange={e => setNumber(e.target.value)}
   //     />
-  //     <span> + 10000 = {hardSum} </span>
-
-  //     <h3>쉬운 계산기</h3>
-  //     <input
-  //       type="number"
-  //       value={easyNumber}
-  //       onChange={e => setEasyNumber(parseInt(e.target.value))}
-  //     />
-  //     <span> + 1 = {easySum} </span>
+  //     <button onClick={() => setToggle(!toggle)}>{toggle.toString()}</button>
+  //     <br />
+  //     <button onClick={someFunction}>Call someFunc</button>
   //   </div>
-  // )
+  // );
 }
 
 export default App;
