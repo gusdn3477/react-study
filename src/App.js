@@ -3,28 +3,57 @@ import TextInputWithFocusButton from "./TextinputWithFocousButton";
 import UseInput from "./UseInput";
 import React, { useState, useRef, useEffect } from "react";
 
+const heavyWork = () =>{
+  console.log("엄청 무거운 작업!!!");
+  return ['홍길동', '김민수'];
+}
 
 function App() {
 
-  const [count, setCount] = useState(1);
-  // const [renderCount, setRenderCount] = useState(1);
-  const renderCount = useRef(1);
+  // 무거운 작업 시 콜백함수를 사용하면 lazy하게 가져와서 효율적이다.
+  const [names, setNames] = useState(() => heavyWork());
+  const [input, setInput] = useState('');
 
-  useEffect(() => {
-    renderCount.current = renderCount.current + 1;
-    console.log('렌더링 수: ', renderCount.current);
-  })
+  const handleInputChange = e => {
+    setInput(e.target.value);
+  }
+
+  // 화살표 함수의 경우 중괄호가 있는 경우 return문을 작성해 주어야 한다.
+  const handleUpload = () => {
+    setNames(prev => 
+      {
+        console.log('이전 state: ', prev);
+        return [input, ...prev]
+      }
+    );
+  }
+
+  return (
+    <div>
+      <input type="text" value={input} onChange={handleInputChange}/>
+      <button onClick={handleUpload}>Update</button>
+      {names.map((name, idx) => <p key={idx}>{name}</p>)}
+    </div>
+  )
+  // const [count, setCount] = useState(1);
+  // // const [renderCount, setRenderCount] = useState(1);
+  // const renderCount = useRef(1);
+
+  // useEffect(() => {
+  //   renderCount.current = renderCount.current + 1;
+  //   console.log('렌더링 수: ', renderCount.current);
+  // })
   // useEffect(() => {
   //   console.log("렌더링!");
   //   setRenderCount(renderCount + 1);
   // }, [count])
 
-  return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>올려</button>
-    </div>
-  )
+  // return (
+  //   <div>
+  //     <p>Count: {count}</p>
+  //     <button onClick={() => setCount(count + 1)}>올려</button>
+  //   </div>
+  // )
   // const [renderer, setRenderer] = useState(0);
   // const countRef = useRef(0);
   // let countVar = 0;
